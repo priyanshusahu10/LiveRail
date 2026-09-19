@@ -399,9 +399,9 @@ export default function TrainMap({
             ? 'bg-emerald-950/85 text-emerald-300 border-emerald-500/50 shadow-emerald-500/20'
             : 'bg-rose-950/85 text-rose-300 border-rose-500/50 shadow-rose-500/20'
         }`}>
-          <span className={`w-2 h-2 rounded-full ${liveData?.isRunning ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`}></span>
+          <span className={`w-2 h-2 rounded-full ${liveData?.isRunning ? 'bg-emerald-400 animate-pulse' : 'bg-red-900'}`}></span>
           <span className="uppercase tracking-wider font-mono">
-            {liveData?.isRunning ? `RUNNING (${liveData?.currentLocation?.speedKmh || 0} km/h)` : 'STOPPED'}
+            {liveData?.isRunning ? `RUNNINGS (${liveData?.currentLocation?.speedKmh || 0} km/h)` : 'STOPPED'}
           </span>
         </div>
 

@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { searchTrains, getTrainByNumber, getLiveTracking, getTrainAnalytics } from './services/trainService.js';
+import { getSeatAvailability } from './services/availabilityService.js';
+import { getPnrStatus } from './services/pnrService.js';
 import { getWeatherForLocation } from './services/weatherService.js';
 import { getNearbyPlaces } from './services/placesService.js';
 
@@ -106,6 +108,47 @@ app.get('/api/trains/:trainNumber/analytics', async (req, res) => {
     res.json(analytics);
   } catch (err) {
     res.status(500).json({ error: 'Analytics temporarily unavailable.' });
+  }
+});
+
+// Check seat availability across classes and rolling dates
+app.get('/api/trains/:trainNumber/availability', async (req, res) => {
+  const { trainNumber } = req.params;
+  const { from, to, date, classCode, quota } = req.query;
+
+  try {
+    const train = await getTrainByNumber(trainNumber);
+    if (!train) {
+      return res.status(404).json({ error: `Train ${trainNumber} not found.` });
+    }
+
+    const availability = await getSeatAvailability(train, {
+      from,
+      to,
+      date,
+      classCode,
+      quota
+    });
+
+    res.json(availability);
+  } catch (err) {
+    console.error(`Seat availability error for ${trainNumber}:`, err);
+    res.status(500).json({ error: 'Seat availability inquiry temporarily unavailable.' });
+  }
+});
+
+// Check 10-digit Indian Railways PNR Status
+app.get('/api/pnr/:pnrNumber', async (req, res) => {
+  const { pnrNumber } = req.params;
+  try {
+    const status = await getPnrStatus(pnrNumber);
+    if (!status) {
+      return res.status(404).json({ error: `PNR ${pnrNumber} not found or records flushed.` });
+    }
+    res.json(status);
+  } catch (err) {
+    console.error(`PNR error for ${pnrNumber}:`, err);
+    res.status(400).json({ error: err.message || 'Invalid PNR request.' });
   }
 });
 

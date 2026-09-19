@@ -1,7 +1,6 @@
 // API Service client for LiveRail
 
-const API_BASE = '/api';
-
+const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api';
 export async function searchTrainsApi(query) {
   if (!query || query.trim().length === 0) return [];
   try {
@@ -71,3 +70,27 @@ export async function getSharedJourneyApi(token) {
   if (!res.ok) throw new Error('Shared journey not found or expired');
   return await res.json();
 }
+
+export async function getSeatAvailabilityApi(trainNumber, params = {}) {
+  const query = new URLSearchParams();
+  if (params.from) query.append('from', params.from);
+  if (params.to) query.append('to', params.to);
+  if (params.date) query.append('date', params.date);
+  if (params.classCode) query.append('classCode', params.classCode);
+  if (params.quota) query.append('quota', params.quota);
+
+  const res = await fetch(`${API_BASE}/trains/${trainNumber}/availability?${query.toString()}`);
+  if (!res.ok) throw new Error('Failed to fetch seat availability');
+  return await res.json();
+}
+
+export async function getPnrStatusApi(pnrNumber) {
+  const cleanPnr = String(pnrNumber).trim().replace(/\D/g, '');
+  const res = await fetch(`${API_BASE}/pnr/${cleanPnr}`);
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to fetch PNR status');
+  }
+  return await res.json();
+}
+

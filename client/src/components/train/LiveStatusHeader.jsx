@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { RefreshCw, Star, Share2, Gauge, AlertCircle, CheckCircle2, Clock, MapPin, ArrowRight } from 'lucide-react';
+import { RefreshCw, Star, Share2, Gauge, AlertCircle, CheckCircle2, Clock, MapPin, ArrowRight, Armchair, Ticket } from 'lucide-react';
 import { isFavourite, toggleFavourite } from '../../utils/storage';
 
 export default function LiveStatusHeader({
   liveData,
   onRefresh,
   isRefreshing,
-  onOpenShare
+  onOpenShare,
+  onOpenSeats,
+  onOpenPnr
 }) {
   const [secondsAgo, setSecondsAgo] = useState(0);
   const [favourited, setFavourited] = useState(false);
@@ -135,8 +137,28 @@ export default function LiveStatusHeader({
             </div>
           </div>
 
-          {/* Action Buttons: Star, Share, Refresh */}
+          {/* Action Buttons */}
           <div className="flex items-center gap-1.5 ml-auto sm:ml-0">
+            {/* Check Seats Button */}
+            <button
+              onClick={onOpenSeats}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cyan-50 dark:bg-cyan-950/60 hover:bg-cyan-100 dark:hover:bg-cyan-900 border border-cyan-200 dark:border-cyan-800 text-cyan-700 dark:text-cyan-300 text-xs font-bold transition-all shadow-sm"
+              title="Check Live Seat Availability"
+            >
+              <Armchair className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Seats</span>
+            </button>
+
+            {/* Check PNR Button */}
+            <button
+              onClick={onOpenPnr}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-bold transition-all shadow-sm"
+              title="Check Live PNR Status"
+            >
+              <Ticket className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">PNR</span>
+            </button>
+
             {/* Favourite Star */}
             <button
               onClick={handleToggleFav}

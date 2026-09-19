@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Train, ArrowRight, Star, Clock, MapPin, Gauge, Mountain, Sun, Compass, Radio, ShieldCheck, Sparkles } from 'lucide-react';
+import { Train, ArrowRight, Star, Clock, MapPin, Gauge, Mountain, Sun, Compass, Radio, ShieldCheck, Sparkles, Armchair, Ticket } from 'lucide-react';
 import SearchBox from '../components/search/SearchBox';
+import SeatAvailabilityModal from '../components/seat/SeatAvailabilityModal';
+import PnrStatusModal from '../components/pnr/PnrStatusModal';
 import { getFavourites, getRecentSearches } from '../utils/storage';
 
 const FEATURED_TRAINS = [
@@ -63,6 +65,9 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [favourites, setFavourites] = useState([]);
   const [recents, setRecents] = useState([]);
+  const [isSeatsOpen, setIsSeatsOpen] = useState(false);
+  const [isPnrOpen, setIsPnrOpen] = useState(false);
+  const [activeModalTrain, setActiveModalTrain] = useState({ number: '22436', name: 'Vande Bharat Express' });
 
   useEffect(() => {
     setFavourites(getFavourites());
@@ -96,6 +101,30 @@ export default function HomePage() {
         {/* Hero Search Box */}
         <div className="max-w-2xl mx-auto pt-2">
           <SearchBox size="large" autoFocus />
+        </div>
+
+        {/* Quick Travel Services Bar: Seats & PNR */}
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveModalTrain({ number: '22436', name: 'Vande Bharat Express' });
+              setIsSeatsOpen(true);
+            }}
+            className="px-4 py-2 rounded-xl bg-cyan-50 dark:bg-cyan-950/60 hover:bg-cyan-100 dark:hover:bg-cyan-900 border border-cyan-200 dark:border-cyan-800 text-cyan-700 dark:text-cyan-300 text-xs font-bold transition-all shadow-sm flex items-center gap-2"
+          >
+            <Armchair className="w-4 h-4 text-cyan-500" />
+            <span>Check Live Seat Availability</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsPnrOpen(true)}
+            className="px-4 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-bold transition-all shadow-sm flex items-center gap-2"
+          >
+            <Ticket className="w-4 h-4 text-indigo-500" />
+            <span>Check Live PNR Status</span>
+          </button>
         </div>
 
         {/* Quick Recent Searches Pills */}
@@ -243,6 +272,20 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Seat Availability Modal */}
+      <SeatAvailabilityModal
+        isOpen={isSeatsOpen}
+        onClose={() => setIsSeatsOpen(false)}
+        trainNumber={activeModalTrain.number}
+        trainName={activeModalTrain.name}
+      />
+
+      {/* PNR Status Modal */}
+      <PnrStatusModal
+        isOpen={isPnrOpen}
+        onClose={() => setIsPnrOpen(false)}
+      />
 
     </div>
   );

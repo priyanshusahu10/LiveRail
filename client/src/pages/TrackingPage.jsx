@@ -8,6 +8,8 @@ import StationTimeline from '../components/train/StationTimeline';
 import AnalyticsDashboard from '../components/analytics/AnalyticsDashboard';
 import TravelCompanion from '../components/companion/TravelCompanion';
 import ShareModal from '../components/share/ShareModal';
+import SeatAvailabilityModal from '../components/seat/SeatAvailabilityModal';
+import PnrStatusModal from '../components/pnr/PnrStatusModal';
 import { Loader2, ArrowLeft, AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function TrackingPage() {
@@ -21,6 +23,8 @@ export default function TrackingPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const [isSeatsOpen, setIsSeatsOpen] = useState(false);
+  const [isPnrOpen, setIsPnrOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'map', 'timeline', 'analytics', 'companion'
 
   const refreshIntervalRef = useRef(null);
@@ -140,6 +144,8 @@ export default function TrackingPage() {
           onRefresh={() => fetchTelemetry(true)}
           isRefreshing={refreshing}
           onOpenShare={() => setIsShareOpen(true)}
+          onOpenSeats={() => setIsSeatsOpen(true)}
+          onOpenPnr={() => setIsPnrOpen(true)}
         />
 
         {/* Journey Progress Bar */}
@@ -194,6 +200,23 @@ export default function TrackingPage() {
         trainNumber={liveData.trainNumber}
         trainName={liveData.trainName}
         liveData={liveData}
+      />
+
+      {/* Seat Availability Modal */}
+      <SeatAvailabilityModal
+        isOpen={isSeatsOpen}
+        onClose={() => setIsSeatsOpen(false)}
+        trainNumber={liveData.trainNumber}
+        trainName={liveData.trainName}
+        origin={liveData.origin}
+        destination={liveData.destination}
+        stations={liveData.stations}
+      />
+
+      {/* PNR Status Modal */}
+      <PnrStatusModal
+        isOpen={isPnrOpen}
+        onClose={() => setIsPnrOpen(false)}
       />
 
     </div>
