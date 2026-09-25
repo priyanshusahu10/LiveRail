@@ -19,11 +19,28 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+const allowedOrigins = [
+  'https://liverail-nine.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
 app.use(cors({
-    origin: "https://liverail-nine.vercel.app/",
-    credentials: true
-}))
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    // Normalize origin by removing trailing slashes
+    const normalizedOrigin = origin.replace(/\/+$/, '');
+    const isAllowed = allowedOrigins.some(o => o.replace(/\/+$/, '') === normalizedOrigin);
+    if (isAllowed || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(null, true); // Or callback(new Error('Not allowed by CORS'))
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // In-memory shared journeys map: token -> { trainNumber, createdAt }
