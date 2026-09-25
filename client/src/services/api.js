@@ -1,6 +1,7 @@
 // API Service client for LiveRail
 
-const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api';
+const BACKEND_URL = import.meta.env.VITE_API_URL || 'https://liverail.onrender.com';
+const API_BASE = `${BACKEND_URL.replace(/\/+$/, '')}/api`;
 export async function searchTrainsApi(query) {
   if (!query || query.trim().length === 0) return [];
   try {
